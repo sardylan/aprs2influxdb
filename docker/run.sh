@@ -20,6 +20,10 @@ if [ -z "${INFLUXDB_NAME}" ]; then
   INFLUXDB_NAME="aprs2influxdb"
 fi
 
+if [ -z "${HOST}" ]; then
+  HOST="rotate.aprs.net"
+fi
+
 if [ -z "${CALLSIGN}" ]; then
   echo "Invalid callsign: \"${CALLSIGN}\""
   exit 1
@@ -31,6 +35,10 @@ fi
 
 if [ -z "${INTERVAL}" ]; then
   INTERVAL="15"
+fi
+
+if [ -z "${FILTER}" ]; then
+  FILTER=""
 fi
 
 APRS2INFLUXDB_CMD_DEBUG=""
@@ -45,7 +53,9 @@ fi
     --dbuser="${INFLUXDB_USER}" \
     --dbpassword="${INFLUXDB_PASSWORD}" \
     --dbname="${INFLUXDB_NAME}" \
+    --host="${HOST}" \
     --callsign="${CALLSIGN}" \
     --port="${PORT}" \
+    --filter="${FILTER}" \
     --interval="${INTERVAL}" \
     ${APRS2INFLUXDB_CMD_DEBUG}
