@@ -6,6 +6,15 @@ RUN python3 -m venv /venv \
     && /venv/bin/pip3 install --upgrade pip setuptools \
     && /venv/bin/pip3 install -r /requirements.txt
 
+FROM venv AS venv-test
+COPY requirements-tests.txt /
+RUN /venv/bin/pip3 install -r /requirements-tests.txt
+
+FROM venv-test AS test
+COPY . /app
+ENV PYTHONPATH="/app/aprs2influxdb:/app/test"
+RUN ["/venv/bin/pytest", "/app/test"]
+
 FROM os AS prod
 COPY --from=venv /venv /venv
 COPY aprs2influxdb /app
