@@ -1,15 +1,15 @@
-import aprslib
-import influxdb
-from influxdb import InfluxDBClient
-import logging
 import argparse
+import logging
+import math
+import os
 import sys
 import threading
 import time
-import os
-import math
-
 from logging.handlers import TimedRotatingFileHandler
+
+import aprslib
+import influxdb
+from influxdb import InfluxDBClient
 
 # Command line input
 parser = argparse.ArgumentParser(description='Connects to APRS-IS and saves stream to local InfluxDB')
@@ -83,7 +83,7 @@ def jsonToLineProtocol(jsonData):
         # All other formats not yes parsed
         logger.debug("Not parsing {0} packets".format(jsonData))
 
-    except StandardError:
+    except Exception:
         # An error occured
         logger.error('A parsing StandardError occured', exc_info=True)
         logger.error("Packet: {0}".format(jsonData))
@@ -129,7 +129,8 @@ def parseTelemetry(jsonData, fieldList):
             values = items.get("vals")
             for analog in range(5):
                 # Apply scaling equation A*V**2 + B*V + C
-                telemVal = channels[analog]["a"] * math.pow(values[analog], 2) + channels[analog]["b"] * values[analog] + channels[analog]["c"]
+                telemVal = channels[analog]["a"] * math.pow(values[analog], 2) + channels[analog]["b"] * values[
+                    analog] + channels[analog]["c"]
                 fieldList.append("analog{0}={1}".format(analog + 1, telemVal))
 
     # Return fieldList with found items appended
@@ -147,7 +148,7 @@ def parseEquations(jsonData):
     jsonData -- JSON packet from aprslib
     '''
     # Check for tEQNS dictionary
-    if("tEQNS" in jsonData):
+    if ("tEQNS" in jsonData):
         # Exists, initialize channels list and extract equations list
         channels = []
         items = jsonData.get("tEQNS")
@@ -178,7 +179,8 @@ def parseWeather(jsonData, fieldList):
         items = jsonData.get("weather")
 
         # Define weather items to check for
-        wxFields = ["humidity", "pressure", "rain_1h", "rain_24h", "rain_since_midnight", "temperature", "wind_direction", "wind_gust", "wind_speed"]
+        wxFields = ["humidity", "pressure", "rain_1h", "rain_24h", "rain_since_midnight", "temperature",
+                    "wind_direction", "wind_gust", "wind_speed"]
         for key in wxFields:
             if key in items:
                 fieldList.append("{0}={1}".format(key, items.get(key)))
@@ -444,7 +446,7 @@ def parseObject(jsonData):
     measurement = "packet"
 
     # Obtain tags
-    #tags.append("from={0}".format(jsonData.get("from")))
+    # tags.append("from={0}".format(jsonData.get("from")))
     tags.append("format={0}".format(jsonData.get("format")))
 
     # Join tags into comma separated string
@@ -1004,6 +1006,8 @@ def parseTextString(rawText, name):
 
     # Check if length is valid
     if len(rawText) > 0:
+        textStr: str = ""
+
         try:
             # Convert to ASCII and replace invalid characters
             text = rawText.encode('ascii', 'replace')
@@ -1060,7 +1064,7 @@ def callback(packet):
         try:
             influxConn.write_points([line], protocol='line')
 
-        except StandardError:
+        except Exception:
             # An error occured before writing to influxdb
             logger.error('A StandardError occured', exc_info=True)
 
