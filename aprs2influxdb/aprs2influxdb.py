@@ -5,8 +5,7 @@ import time
 from typing import Optional
 
 import aprslib
-from influxdb import InfluxDBClient
-from influxdb.exceptions import InfluxDBClientError, InfluxDBServerError
+from influxdb_client import InfluxDBClient
 
 from config import ConfigParams
 from parser import Parser
@@ -103,12 +102,9 @@ class APRS2InfluxDB(StoppableThread):
         _logger.info("InfluxDB Client START")
 
         self._influxdb = InfluxDBClient(
-            host=self._config_params.influxdb_host,
-            port=self._config_params.influxdb_port,
-            username=self._config_params.influxdb_username,
-            password=self._config_params.influxdb_password,
-            database=self._config_params.influxdb_database,
-            ssl=self._config_params.influxdb_ssl,
+            url=self._config_params.influxdb_url,
+            token=self._config_params.influxdb_token,
+            org=self._config_params.influxdb_org
         )
 
     def _influxdb_client_stop(self) -> None:
@@ -155,25 +151,25 @@ class APRS2InfluxDB(StoppableThread):
             raise e
 
     def _consume_packet(self, packet) -> None:
+        _logger.debug(f"Original packet: {packet}")
+
         line = self._parser.json_to_line_protocol(packet)
+        _logger.debug(f"Parsed line: {line}")
+
         if not line:
             return
 
-        # Write string to database
         try:
-            self._influxdb.write_points([line], protocol="line")
+            _logger.info("Writing data to InfluxDB")
 
-        except InfluxDBClientError as e:
-            # An error occured in the request
-            _logger.error("An error occured in the request", exc_info=True)
-            _logger.error("Line Protocol: {0}".format(line))
+            self._influxdb.write_api().write(
+                org=self._config_params.influxdb_org,
+                bucket=self._config_params.influxdb_bucket,
+                record=line
+            )
 
-        except InfluxDBServerError:
-            # An error occured in the server
-            _logger.error("An error occured in the server", exc_info=True)
-            _logger.error("Line Protocol: {0}".format(line))
+            _logger.debug("Write completed")
 
         except Exception as e:
-            # An error occured before writing to influxdb
             _logger.error(e)
             raise e

@@ -12,12 +12,10 @@ class ConfigParams:
     _aprs_filter: str
     _aprs_heartbeat_interval: datetime.timedelta
 
-    _influxdb_host: str
-    _influxdb_port: int
-    _influxdb_username: str
-    _influxdb_password: str
-    _influxdb_database: str
-    _influxdb_ssl: bool
+    _influxdb_url: str
+    _influxdb_token: str
+    _influxdb_org: str
+    _influxdb_bucket: str
 
     def __init__(self) -> None:
         super().__init__()
@@ -28,12 +26,10 @@ class ConfigParams:
         self._aprs_filter = DEFAULT_APRS_FILTER
         self._aprs_heartbeat_interval = DEFAULT_APRS_HEARTBEAT_INTERVAL
 
-        self._influxdb_host = DEFAULT_INFLUXDB_HOST
-        self._influxdb_port = DEFAULT_INFLUXDB_PORT
-        self._influxdb_username = DEFAULT_INFLUXDB_USERNAME
-        self._influxdb_password = DEFAULT_INFLUXDB_PASSWORD
-        self._influxdb_database = DEFAULT_INFLUXDB_DATABASE
-        self._influxdb_ssl = DEFAULT_INFLUXDB_SSL
+        self._influxdb_url = DEFAULT_INFLUXDB_URL
+        self._influxdb_token = DEFAULT_INFLUXDB_TOKEN
+        self._influxdb_org = DEFAULT_INFLUXDB_ORG
+        self._influxdb_bucket = DEFAULT_INFLUXDB_BUCKET
 
     @property
     def aprs_server(self) -> str:
@@ -77,52 +73,36 @@ class ConfigParams:
         self._aprs_heartbeat_interval = aprs_heartbeat_interval
 
     @property
-    def influxdb_host(self) -> str:
-        return self._influxdb_host
+    def influxdb_url(self) -> str:
+        return self._influxdb_url
 
-    @influxdb_host.setter
-    def influxdb_host(self, influxdb_host: str = DEFAULT_INFLUXDB_HOST) -> None:
-        self._influxdb_host = influxdb_host
-
-    @property
-    def influxdb_port(self) -> int:
-        return self._influxdb_port
-
-    @influxdb_port.setter
-    def influxdb_port(self, influxdb_port: int = DEFAULT_INFLUXDB_PORT) -> None:
-        self._influxdb_port = influxdb_port
+    @influxdb_url.setter
+    def influxdb_url(self, influxdb_url: str = DEFAULT_INFLUXDB_URL) -> None:
+        self._influxdb_url = influxdb_url
 
     @property
-    def influxdb_username(self) -> str:
-        return self._influxdb_username
+    def influxdb_token(self) -> str:
+        return self._influxdb_token
 
-    @influxdb_username.setter
-    def influxdb_username(self, influxdb_username: str = DEFAULT_INFLUXDB_USERNAME) -> None:
-        self._influxdb_username = influxdb_username
-
-    @property
-    def influxdb_password(self) -> str:
-        return self._influxdb_password
-
-    @influxdb_password.setter
-    def influxdb_password(self, influxdb_password: str = DEFAULT_INFLUXDB_PASSWORD) -> None:
-        self._influxdb_password = influxdb_password
+    @influxdb_token.setter
+    def influxdb_token(self, influxdb_token: str = DEFAULT_INFLUXDB_TOKEN) -> None:
+        self._influxdb_token = influxdb_token
 
     @property
-    def influxdb_database(self) -> str:
-        return self._influxdb_database
+    def influxdb_org(self) -> str:
+        return self._influxdb_org
 
-    @influxdb_database.setter
-    def influxdb_database(self, influxdb_database: str = DEFAULT_INFLUXDB_DATABASE) -> None:
-        self._influxdb_database = influxdb_database
+    @influxdb_org.setter
+    def influxdb_org(self, influxdb_org: str = DEFAULT_INFLUXDB_ORG) -> None:
+        self._influxdb_org = influxdb_org
 
     @property
-    def influxdb_ssl(self) -> bool:
-        return self._influxdb_ssl
+    def influxdb_bucket(self) -> str:
+        return self._influxdb_bucket
 
-    @influxdb_ssl.setter
-    def influxdb_ssl(self, influxdb_ssl: bool = DEFAULT_INFLUXDB_SSL) -> None:
-        self._influxdb_ssl = influxdb_ssl
+    @influxdb_bucket.setter
+    def influxdb_bucket(self, influxdb_bucket: str = DEFAULT_INFLUXDB_BUCKET) -> None:
+        self._influxdb_bucket = influxdb_bucket
 
     def log(self) -> None:
         _logger.debug(f"APRS")
@@ -133,9 +113,7 @@ class ConfigParams:
         _logger.debug(f"  - Heartbeat interval: {self._aprs_heartbeat_interval}")
 
         _logger.debug(f"InfluxDB")
-        _logger.debug(f"  - Host: {self._influxdb_host}")
-        _logger.debug(f"  - Port: {self._influxdb_port}")
-        _logger.debug(f"  - Username: {self._influxdb_username}")
-        _logger.debug(f"  - Password: {self._influxdb_password}")
-        _logger.debug(f"  - Database: {self._influxdb_database}")
-        _logger.debug(f"  - SSL: {self._influxdb_ssl}")
+        _logger.debug(f"  - URL: {self._influxdb_url}")
+        _logger.debug(f"  - Token: {self._influxdb_token}")
+        _logger.debug(f"  - Organization: {self._influxdb_org}")
+        _logger.debug(f"  - Bucket: {self._influxdb_bucket}")
