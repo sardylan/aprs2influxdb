@@ -7,7 +7,8 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  build_test_publish:
+    name: "Build, Tests and Publish"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -21,5 +22,5 @@ jobs:
         run: docker image build --target=test .
       - name: Build the Docker image
         run: docker image build --target=prod --tag ${IMAGE_TAG} .
-      - name: Publich the Docker image
+      - name: Publish the Docker image
         run: docker image push ${IMAGE_TAG}
