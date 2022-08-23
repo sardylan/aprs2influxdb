@@ -1,0 +1,17 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run tests
+        run: docker image build --target=test .
+      - name: Build the Docker image
+        run: docker image build --target=prod --tag aprs2influxdb:${GITHUB_REF##*/} .
