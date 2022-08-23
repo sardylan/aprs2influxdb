@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Add SHORT_SHA env property with commit short sha
-        run: echo "SHORT_SHA=\$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+        run: echo "SHORT_SHA=`git rev-parse --short HEAD`" >> $GITHUB_ENV
       - name: Add IMAGE_TAG env property with image tag
         run: echo "IMAGE_TAG=sardylan/aprs2influxdb:${SHORT_SHA}" >> $GITHUB_ENV
       - name: Log in to Docker Hub
