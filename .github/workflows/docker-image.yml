@@ -11,7 +11,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Add SHORT_SHA env property with commit short sha
+        run: |
+          echo "SHORT_SHA=\"\$(git rev-parse --short HEAD)\"" >> $GITHUB_ENV
+          echo "IMAGE_TAG=\"${{ secrets.DOCKER_USERNAME }}/aprs2influxdb:${SHORT_SHA}\"" >> $GITHUB_ENV
+      - name: Log in to Docker Hub
+        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
       - name: Run tests
         run: docker image build --target=test .
       - name: Build the Docker image
-        run: docker image build --target=prod --tag aprs2influxdb:${GITHUB_REF##*/} .
+        run: docker image build --target=prod --tag ${IMAGE_TAG} .
+      - name: Publich the Docker image
+        run: docker image push ${IMAGE_TAG}
