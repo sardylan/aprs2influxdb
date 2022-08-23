@@ -14,9 +14,9 @@ jobs:
       - name: Add SHORT_SHA env property with commit short sha
         run: |
           echo "SHORT_SHA=\"\$(git rev-parse --short HEAD)\"" >> $GITHUB_ENV
-          echo "IMAGE_TAG=\"${{ secrets.DOCKER_USERNAME }}/aprs2influxdb:${SHORT_SHA}\"" >> $GITHUB_ENV
+          echo "IMAGE_TAG=\"sardylan/aprs2influxdb:${SHORT_SHA}\"" >> $GITHUB_ENV
       - name: Log in to Docker Hub
-        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+        run: docker login -u sardylan -p ${{ secrets.DOCKER_HUB_PASSWORD }}
       - name: Run tests
         run: docker image build --target=test .
       - name: Build the Docker image
