@@ -18,6 +18,7 @@ Supported APRS Packet Formats:
 * beacon
 * bulletin
 * message
+* telemetry
 
 Non-ASCII characters in APRS packets are replaced!
 
