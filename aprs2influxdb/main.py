@@ -69,13 +69,17 @@ def main() -> None:
     if args.debug:
         logging_level = logging.DEBUG
 
-    logging.basicConfig(level=logging_level)
+    logging.basicConfig(
+        level=logging_level,
+        format="%(asctime)s [%(levelname)5s] %(name)s {%(threadName)s}: %(message)s"
+    )
 
     config_params: ConfigParams = ConfigParams()
 
     config_params.aprs_server = args.host
     config_params.aprs_port = int(args.port)
     config_params.aprs_callsign = args.callsign
+    config_params.aprs_filter = args.filter
 
     config_params.influxdb_host = args.dbhost
     config_params.influxdb_port = int(args.dbport)

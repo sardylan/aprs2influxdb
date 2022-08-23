@@ -8,14 +8,16 @@ _logger = logging.getLogger(__name__)
 
 class StoppableThread(abc.ABC):
     _thread_lock: threading.Lock
+    _thread_name: str
     _thread: Optional[threading.Thread]
 
     _keep_running: bool
 
-    def __init__(self) -> None:
+    def __init__(self, thread_name: str = "") -> None:
         super().__init__()
 
         self._thread_lock = threading.Lock()
+        self._thread_name = thread_name
         self._thread = None
         self._keep_running = False
 
@@ -26,7 +28,7 @@ class StoppableThread(abc.ABC):
             if self._thread:
                 return
 
-            self._thread = threading.Thread(target=self._loop)
+            self._thread = threading.Thread(target=self._loop, name=self._thread_name)
 
             self._keep_running = True
             self._thread.start()

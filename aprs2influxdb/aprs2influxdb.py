@@ -29,13 +29,14 @@ class APRS2InfluxDB(StoppableThread):
     _parser: Parser
 
     def __init__(self, config_params: ConfigParams) -> None:
-        super().__init__()
+        super().__init__(thread_name="APRS-IS")
 
         self._lock = threading.Lock()
 
         if not config_params:
             raise ValueError("Invalid config parameters")
         self._config_params = config_params
+        self._config_params.log()
 
         self._config_params.aprs = None
         self._influxdb = None
@@ -84,6 +85,11 @@ class APRS2InfluxDB(StoppableThread):
         )
 
         self._aprs.logger = logging.getLogger("aprslib")
+
+        _logger.info("Setting filter")
+        self._aprs.set_filter(self._config_params.aprs_filter)
+
+        _logger.info("Connecting")
         self._aprs.connect()
 
     def _aprs_client_stop(self) -> None:
@@ -111,7 +117,7 @@ class APRS2InfluxDB(StoppableThread):
     def _heartbeat_start(self) -> None:
         _logger.info("APRS Heartbeat START")
 
-        self._heartbeat_thread = threading.Thread(target=self._heartbeat_loop)
+        self._heartbeat_thread = threading.Thread(target=self._heartbeat_loop, name="Heartbeat")
         self._heartbeat_thread.start()
 
     def _heartbeat_stop(self) -> None:

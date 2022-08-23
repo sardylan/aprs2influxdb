@@ -1,4 +1,8 @@
+import logging
+
 from default import *
+
+_logger = logging.getLogger(__name__)
 
 
 class ConfigParams:
@@ -119,3 +123,19 @@ class ConfigParams:
     @influxdb_ssl.setter
     def influxdb_ssl(self, influxdb_ssl: bool = DEFAULT_INFLUXDB_SSL) -> None:
         self._influxdb_ssl = influxdb_ssl
+
+    def log(self) -> None:
+        _logger.debug(f"APRS")
+        _logger.debug(f"  - Server: {self._aprs_server}")
+        _logger.debug(f"  - Port: {self._aprs_port}")
+        _logger.debug(f"  - Callsign: {self._aprs_callsign}")
+        _logger.debug(f"  - Filter: {self._aprs_filter}")
+        _logger.debug(f"  - Heartbeat interval: {self._aprs_heartbeat_interval}")
+
+        _logger.debug(f"InfluxDB")
+        _logger.debug(f"  - Host: {self._influxdb_host}")
+        _logger.debug(f"  - Port: {self._influxdb_port}")
+        _logger.debug(f"  - Username: {self._influxdb_username}")
+        _logger.debug(f"  - Password: {self._influxdb_password}")
+        _logger.debug(f"  - Database: {self._influxdb_database}")
+        _logger.debug(f"  - SSL: {self._influxdb_ssl}")
