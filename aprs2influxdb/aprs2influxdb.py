@@ -75,7 +75,9 @@ class APRS2InfluxDB(StoppableThread):
     def _aprs_client_start(self) -> None:
         _logger.info("APRS Client START")
 
+        _logger.info("Computing passcode")
         passcode: int = aprslib.passcode(self._config_params.aprs_callsign)
+        _logger.debug(f"Passcode for {self._config_params.aprs_callsign} id {passcode}")
 
         self._aprs = aprslib.IS(
             host=self._config_params.aprs_server,
